@@ -1,4 +1,6 @@
 "use client";
+import { authClient } from '@/lib/auth-client';
+import { email } from 'better-auth';
 import Link from 'next/link';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -7,8 +9,20 @@ const registerPage = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
-    const handleRegisterFunc = (data) => {
+    const handleRegisterFunc = async (data) => {
         console.log(data, "data");
+        const { name, email, password, photo } = data;
+        console.log(name, photo);
+
+
+        const { data: res, error } = await authClient.signUp.email({
+            name: name, // required
+            email: email, // required
+            password: password, // required
+            image: photo,
+            callbackURL: "/",
+        });
+        console.log(res, error);
     };
     console.log(errors, "errors");
 
@@ -51,7 +65,7 @@ const registerPage = () => {
                     />
                     {errors.email && <p className="text-red-500">Email is required</p>}
                 </fieldset>
-                
+
                 <fieldset className="$$fieldset">
                     <legend className="$$fieldset-legend">Password</legend>
                     <input
